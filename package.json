@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "node tests/multiple_ips.js",
-    "start": "node ."
+    "start": "node .",
+    "webpack": "npx webpack"
   },
   "author": "stanstrum",
   "license": "ISC",
