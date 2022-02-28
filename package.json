@@ -1,0 +1,35 @@
+{
+  "name": "queryserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node tests/multiple_ips.js",
+    "start": "node ."
+  },
+  "author": "stanstrum",
+  "license": "ISC",
+  "devDependencies": {
+    "hexy": "^0.3.1",
+    "module-alias": "^2.2.2",
+    "node-test": "^1.4.6",
+    "nodemon": "^2.0.12",
+    "webpack": "^5.45.1",
+    "webpack-cli": "^4.7.2"
+  },
+  "_moduleAliases": {
+    "~root": "src",
+    "@lib": "src/lib",
+    "@static": "src/static"
+  },
+  "dependencies": {
+    "npm": "^7.23.0",
+    "uuid": "^8.3.2",
+    "varint": "^6.0.0"
+  },
+  "nodemonConfig": {
+    "watch": "src/**/*",
+    "ext": "*",
+    "//exec": "npx webpack && node dist/queryServer.js"
+  }
+}
