@@ -149,6 +149,16 @@ async function queryServer(rawHost, rawPort = null) {
       throw new Error("Detecting remote server type is not implemented yet");
   }
 
+  // Clean up returnObject strings
+  if (typeof returnObject.motd === "string") {
+    returnObject.motd =
+      returnObject.motd
+      .replace(/§[0-9a-fk-or]/ig, "")
+      .split('\n')
+      .map(line => line.trim())
+      .join('\n');
+  }
+
   return returnObject;
 }
 
