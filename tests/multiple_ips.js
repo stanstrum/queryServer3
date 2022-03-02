@@ -53,8 +53,10 @@ const servers = [
   try {
     for (const [ip, port] of servers) {
       console.group("Host " + (port ? `${ip}:${port}` : ip));
+      console.group();
 
       var response = await queryServer(ip, port);
+      console.groupEnd();
       console.group("Result from queryServer:");
       console.dir(response, { depth: null });
 
