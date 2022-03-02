@@ -1,7 +1,6 @@
 # queryServer3
 Minecraft Server Status's QueryServer.js library v3
 ## NOTE: This project is still WIP
----
 Install instructions:
 1. Clone the repository
 ```
