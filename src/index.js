@@ -69,7 +69,7 @@ async function queryServer(rawHost, rawPort = null) {
   };
 
   switch (port) {
-    case 25565:
+    case 25565: {
       console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
       const results = await queryJava(host, port, TIMEOUT_MS);
       const { buffer } = results;
@@ -110,6 +110,7 @@ async function queryServer(rawHost, rawPort = null) {
         throw new Error("Strings not implemented");
         console.groupEnd();
       }
+    } break;
 
     case 19132:
       throw new Error("Probing Bedrock/MCPE servers is not implemented yet");
