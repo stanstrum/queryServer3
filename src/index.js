@@ -57,27 +57,23 @@ async function queryServer(rawHost, rawPort = null) {
     }
   }
 
-    switch (port) {
-      default:
-      case 25565:
-        console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
+  switch (port) {
+    case 25565:
+      console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
 
-        const { latency, buffer } = await queryJava(host, port, TIMEOUT_MS);
+      const { latency, buffer } = await queryJava(host, port, TIMEOUT_MS);
 
-        console.dir(latency);
-        console.dir(buffer);
+      console.groupEnd();
+      break;
 
-        console.groupEnd();
-        break;
+    case 19132:
+      throw new Error("Probing Bedrock/MCPE servers is not implemented yet");
 
-      case 19132:
-        throw new Error("Probing Bedrock/MCPE servers is not implemented yet");
+      break;
 
-        break;
-
-      // default:
-      //   throw new Error("Detecting remote server type is not implemented yet");
-    }
+    default:
+      throw new Error("Detecting remote server type is not implemented yet");
+  }
 }
 
 module.exports = queryServer;
