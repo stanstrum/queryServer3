@@ -53,7 +53,7 @@ const servers = [
   try {
     for (const [ip, port] of servers) {
       console.group("Host " + (port ? `${ip}:${port}` : ip));
-      console.group();
+      console.group("Calling queryServer");
 
       var response = await queryServer(ip, port);
       console.groupEnd();
