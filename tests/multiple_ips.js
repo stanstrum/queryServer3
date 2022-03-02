@@ -3,8 +3,8 @@ process.on("unhandledRejection", e => console.error("Unhandled Promise Rejection
 const servers = [
   ["mc.hypixel.net", 25565],
   ["192.168.1.3", 25565],
+  ["play.lbsg.net", 19132],
   ["192.168.1.3", 25566],
-  ["play.lbsg.net", ],
   ["hub.mc-complex.com", ],
   ["mchub.com", ],
   ["play.pixelmonrealms.com", ],
@@ -56,21 +56,19 @@ const servers = [
 
       var response = await queryServer(ip, port);
       console.group("Result from queryServer:");
-      console.dir(response);
+      console.dir(response, { depth: null });
 
       console.groupEnd();
-      if (typeof response !== "object" ||
-          typeof response.motd !== "string" ||
-          typeof response.version !== "string" ||
-          typeof response.latency !== "string" ||
-          typeof response.players !== "object" ||
-          typeof response.players.online !== "number" ||
-          typeof response.players.max !== "number" ||
-          response.players.list instanceof Array ||
-          !response.players.list.every(
-            entry => typeof entry === "object" &&
-                     typeof entry.name === "string" &&
-                     typeof entry.uuid === "string"
+      if (typeof response?.motd !== "string" ||
+          typeof response?.version !== "string" ||
+          typeof response?.latency !== "string" ||
+          typeof response?.players !== "object" ||
+          typeof response?.players?.online !== "string" ||
+          typeof response?.players?.max !== "string" ||
+          !(response?.players?.list instanceof Array) ||
+          response?.players?.list?.some(
+            entry => typeof entry?.name !== "string" ||
+                     typeof entry?.uuid !== "string"
           )
       ) {
         throw new Error("Returned object is not of correct format");
