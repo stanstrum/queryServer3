@@ -65,7 +65,11 @@ const servers = [
           typeof response.players.online !== "number" ||
           typeof response.players.max !== "number" ||
           response.players.list instanceof Array ||
-          !response.players.list.every(entry => typeof entry === "object" && typeof entry.name === "string" && typeof entry.uuid === "string")
+          !response.players.list.every(
+            entry => typeof entry === "object" &&
+                     typeof entry.name === "string" &&
+                     typeof entry.uuid === "string"
+          )
       ) {
         throw new Error("Returned object is not of correct format");
       }
