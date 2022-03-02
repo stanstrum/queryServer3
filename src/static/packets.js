@@ -26,7 +26,7 @@ const Bedrock = {
 };
 
 const Java = {
-  protocolVersion: 757,
+  protocolVersion: 758,
   handshake: new PacketTool(
     [
       { protocolVersion: DT.VarInt       },
@@ -43,6 +43,20 @@ const Java = {
       { jsonResponse: DT.VarIntString }
     ],
     0x00,
+    PacketTypes.Java
+  ),
+  ping: new PacketTool(
+    [
+      { payload: DT.FixedByteArray }
+    ],
+    0x01,
+    PacketTypes.Java
+  ),
+  pong: new PacketTool(
+    [
+      { payload: DT.FixedByteArray }
+    ],
+    0x01,
     PacketTypes.Java
   )
 };
@@ -116,7 +130,6 @@ const Query = {
     PacketTypes.Raw
   )
 };
-
 
 module.exports = {
   Bedrock,
