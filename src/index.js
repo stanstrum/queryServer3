@@ -91,12 +91,42 @@ async function queryServer(rawHost, rawPort = null) {
         if (responseAsObject.favicon?.length > 100)
           responseAsObject.favicon = "too long";
 
+        // console.group("Decoded response object:");
+        // console.dir(responseAsObject, { depth: null });
+        // console.groupEnd();
+
         if (typeof responseAsObject.version?.name !== "string")
           throw new Error("No version in responseAsObject");
 
         returnObject.version = responseAsObject.version.name;
 
-        console.groupEnd();
+        if (typeof responseAsObject.description?.text === "string") {
+          returnObject.motd = responseAsObject.description.text;
+        } else if (typeof responseAsObject.description === "string") {
+          returnObject.motd = responseAsObject.description;
+        }
+
+        if (
+          typeof responseAsObject.players?.max    !== "number" ||
+          typeof responseAsObject.players?.online !== "number"
+        ) {
+          throw new Error("Invalid players structure");
+        }
+
+        returnObject.players.max = responseAsObject.players.max.toString();
+        returnObject.players.online = responseAsObject.players.online.toString();
+
+        if (
+          responseAsObject.players?.sample?.every(
+            entry => typeof entry?.id === "string" || typeof entry?.name === "string"
+          )
+        ) {
+          returnObject.players.list = responseAsObject.players.sample.map(({ id, name }) => ({ uuid: id, name }));
+        } else {
+          console.log("No player sample, defaulting to []");
+
+          returnObject.players.list = [];
+        }
 
         console.group("Decoded response object:");
         console.dir(responseAsObject);
