@@ -75,7 +75,7 @@ async function queryServer(rawHost, rawPort = null) {
       const { buffer } = results;
 
       if (typeof results.latency === "number") {
-        returnObject.latency = results.latency;
+        returnObject.latency = results.latency.toString();
       }
 
       console.groupEnd();
