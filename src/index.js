@@ -73,14 +73,14 @@ async function queryServer(rawHost, rawPort = null) {
       console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
       const results = await queryJava(host, port, TIMEOUT_MS);
       const { buffer } = results;
+      console.groupEnd();
+
+      console.group("Decoding response packet");
 
       if (typeof results.latency === "number") {
         returnObject.latency = results.latency.toString();
       }
 
-      console.groupEnd();
-
-      console.group("Decoding response packet");
       try {
         const decoded = Java.response.decode(buffer);
         const responseAsObject = JSON.parse(decoded.jsonResponse);
