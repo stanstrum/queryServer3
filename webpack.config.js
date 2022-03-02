@@ -45,5 +45,5 @@ module.exports = {
       }
     })
   ],
-  stats: "verbose"
+  // stats: "verbose"
 };
