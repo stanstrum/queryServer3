@@ -1,8 +1,8 @@
 process.on("unhandledRejection", e => console.error("Unhandled Promise Rejection:\n" + e.stack || e));
 
 const servers = [
-  ["192.186.1.3", 25565],
-  ["192.186.1.3", 25566],
+  ["192.168.1.3", 25565],
+  ["192.168.1.3", 25566],
   ["play.lbsg.net", ],
   ["hub.mc-complex.com", ],
   ["mchub.com", ],
