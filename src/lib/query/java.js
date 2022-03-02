@@ -15,12 +15,14 @@ const connectionTimeout =
     )
   );
 
-const readJavaPacket = async socket =>
-  await new Promise((resolve, reject) => {
+const readJavaPacket = socket => {
+  let listener;
+
+  return new Promise((resolve, reject) => {
     let buffer;
     let offset = 0;
 
-    socket.on("data", data => {
+    listener = data => {
       if (!buffer) {
         let length = varint.decode(data, 0);
         length += varint.decode.bytes;
@@ -42,10 +44,17 @@ const readJavaPacket = async socket =>
         console.log(`Copied ${data.length} byte(s) from handler, new offset is ${offset} byte(s)`);
       } else {
         console.log(`Copied last chunk of ${data.length} byte(s), total size is ${buffer.length} byte(s)`);
+
         resolve(buffer);
       }
-    });
-  });
+    }
+
+    socket.on("data", listener);
+  })
+    .finally(
+      () => socket.removeListener("data", listener)
+    );
+};
 
 async function query(host, port, timeout) {
   validateArguments(...arguments);
