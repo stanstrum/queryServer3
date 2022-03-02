@@ -27,7 +27,7 @@ const readJavaPacket = socket => {
         let length = varint.decode(data, 0);
         length += varint.decode.bytes;
 
-        console.log(`Received first chunk, allocating buffer with ${length} byte(s)`);
+        // console.log(`Received first chunk, allocating buffer with ${length} byte(s)`);
         buffer = Buffer.alloc(length);
       }
 
@@ -41,9 +41,9 @@ const readJavaPacket = socket => {
       offset += data.length;
 
       if (buffer.length !== offset) {
-        console.log(`Copied ${data.length} byte(s) from handler, new offset is ${offset} byte(s)`);
+        // console.log(`Copied ${data.length} byte(s) from handler, new offset is ${offset} byte(s)`);
       } else {
-        console.log(`Copied last chunk of ${data.length} byte(s), total size is ${buffer.length} byte(s)`);
+        // console.log(`Copied last chunk of ${data.length} byte(s), total size is ${buffer.length} byte(s)`);
 
         resolve(buffer);
       }
