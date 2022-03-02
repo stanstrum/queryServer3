@@ -126,7 +126,26 @@ async function query(host, port, timeout) {
   return { latency, };
 }
 
+// function strings(buffer) {
+//   let beginOffset = 0;
+//   let endOffset = buffer.byteLength - 1;
+
+//   while (buffer[beginOffset] !== '{'.charCodeAt(0) && beginOffset < endOffset) {
+//     beginOffset++;
+//   }
+
+//   while (buffer[endOffset] !== '}'.charCodeAt(0) && endOffset > beginOffset) {
+//     endOffset--;
+//   }
+
+//   if (endOffset - beginOffset == 1) {
+//     throw new Error("Java Strings failed: no JSON text found");
+//   }
+
+//   return JSON.parse(buffer.slice(beginOffset, endOffset + 1).toString("utf-8"));
+// }
+
 module.exports = {
   query,
-  strings
+  // strings
 };
