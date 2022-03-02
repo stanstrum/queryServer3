@@ -57,13 +57,34 @@ async function queryServer(rawHost, rawPort = null) {
     }
   }
 
+  const returnObject = {
+    motd: null,
+    version: null,
+    latency: null,
+    players: {
+      online: null,
+      max: null,
+      player_list: null
+    }
+  };
+
   switch (port) {
     case 25565:
       console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
+      const results = await queryJava(host, port, TIMEOUT_MS);
+      const { buffer } = results;
 
-      const { latency, buffer } = await queryJava(host, port, TIMEOUT_MS);
+      if (typeof results.latency === "number") {
+        returnObject.latency = results.latency;
+      }
 
       console.groupEnd();
+
+      console.group("Decoding response packet");
+      const decoded = Java.response.decode(buffer);
+      const responseAsObject = JSON.parse(decoded.jsonResponse);
+      console.groupEnd();
+
       break;
 
     case 19132:
@@ -74,6 +95,8 @@ async function queryServer(rawHost, rawPort = null) {
     default:
       throw new Error("Detecting remote server type is not implemented yet");
   }
+
+  return returnObject;
 }
 
 module.exports = queryServer;

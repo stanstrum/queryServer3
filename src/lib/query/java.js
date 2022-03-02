@@ -119,11 +119,7 @@ async function query(host, port, timeout) {
 
   socket.end();
 
-  console.group("Decoding response packet");
-  const decoded = Java.response.decode(response);
-  console.dir(JSON.parse(decoded.jsonResponse));
-
-  return { latency, };
+  return { latency, buffer: response };
 }
 
 // function strings(buffer) {
