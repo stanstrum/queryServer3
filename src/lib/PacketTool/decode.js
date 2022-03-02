@@ -7,7 +7,7 @@ const {
 
 const varint = require("varint");
 
-// const { show_hexy } = require("@lib/helpers.js");
+const { show_hexy } = require("@lib/helpers.js");
 
 function decode(buffer, fixedByteLengths = []) {
   // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -173,7 +173,7 @@ function decode(buffer, fixedByteLengths = []) {
         offset += length;
 
         if (bytes.length !== length) {
-          // console.log(`Failed to read string, ran out of bytes (read: ${bytes.length}, expected: ${length})`);
+          console.log(`Failed to read string, ran out of bytes (read: ${bytes.length}, expected: ${length})`);
         }
 
         returnObject[key] = string;
