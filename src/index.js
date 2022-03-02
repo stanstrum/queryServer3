@@ -64,7 +64,7 @@ async function queryServer(rawHost, rawPort = null) {
     players: {
       online: null,
       max: null,
-      player_list: null
+      list: null
     }
   };
 
