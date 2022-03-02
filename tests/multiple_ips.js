@@ -55,8 +55,10 @@ const servers = [
       console.group("Host " + (port ? `${ip}:${port}` : ip));
 
       var response = await queryServer(ip, port);
+      console.group("Result from queryServer:");
       console.dir(response);
 
+      console.groupEnd();
       if (typeof response !== "object" ||
           typeof response.motd !== "string" ||
           typeof response.version !== "string" ||

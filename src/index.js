@@ -81,11 +81,35 @@ async function queryServer(rawHost, rawPort = null) {
       console.groupEnd();
 
       console.group("Decoding response packet");
-      const decoded = Java.response.decode(buffer);
-      const responseAsObject = JSON.parse(decoded.jsonResponse);
-      console.groupEnd();
+      try {
+        const decoded = Java.response.decode(buffer);
+        const responseAsObject = JSON.parse(decoded.jsonResponse);
 
-      break;
+        if (typeof responseAsObject !== "object")
+          throw new Error("responseAsObject is not an object");
+
+        if (responseAsObject.favicon?.length > 100)
+          responseAsObject.favicon = "too long";
+
+        if (typeof responseAsObject.version?.name !== "string")
+          throw new Error("No version in responseAsObject");
+
+        returnObject.version = responseAsObject.version.name;
+
+        console.groupEnd();
+
+        console.group("Decoded response object:");
+        console.dir(responseAsObject);
+        console.groupEnd();
+
+      } catch (e) {
+        console.error(e?.stack || e);
+        console.groupEnd();
+
+        console.group("Failed to decode, trying strings");
+        throw new Error("Strings not implemented");
+        console.groupEnd();
+      }
 
     case 19132:
       throw new Error("Probing Bedrock/MCPE servers is not implemented yet");
