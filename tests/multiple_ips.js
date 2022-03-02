@@ -1,6 +1,7 @@
 process.on("unhandledRejection", e => console.error("Unhandled Promise Rejection:\n" + e.stack || e));
 
 const servers = [
+  ["mc.hypixel.net", 25565],
   ["192.168.1.3", 25565],
   ["192.168.1.3", 25566],
   ["play.lbsg.net", ],
