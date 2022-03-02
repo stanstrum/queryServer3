@@ -128,8 +128,6 @@ async function queryServer(rawHost, rawPort = null) {
           returnObject.players.list = [];
         }
 
-        console.group("Decoded response object:");
-        console.dir(responseAsObject);
         console.groupEnd();
 
       } catch (e) {

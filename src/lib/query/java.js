@@ -69,10 +69,10 @@ async function query(host, port, timeout) {
   console.log(`Connection established`);
   console.groupEnd();
 
-  socket.on("data", data => show_hexy(data, '<'));
+  // socket.on("data", data => show_hexy(data, '<'));
   socket.on("end", data => console.log("Socket ended"));
   const write = data => {
-    show_hexy(data, '>');
+    // show_hexy(data, '>');
     socket.write(data);
   };
 
