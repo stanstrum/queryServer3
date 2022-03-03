@@ -28,6 +28,5 @@ module.exports = {
   DataTypes,
   PacketTypes,
   RAKNET_MAGIC,
-  LEGACY_MAGIC,
-  ConnectionError
+  LEGACY_MAGIC
 };
