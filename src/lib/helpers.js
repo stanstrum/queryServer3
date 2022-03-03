@@ -81,7 +81,13 @@ const auto = () => ++ctr;
 
 const removeFormatting = string => string.replace(/§[0-9a-fk-or]/ig, "").trim();
 
-const TimeoutPromise = async (timeout, error) => new Promise((_, reject) => setTimeout(() => reject(error), timeout));
+const TimeoutPromise =
+  (timeout, what) => new Promise(
+    (_, reject) => setTimeout(
+      () => reject(new ConnectionError(what + ": Connection timed out")),
+      timeout
+    )
+  );
 
 module.exports = {
   verifyHostname,

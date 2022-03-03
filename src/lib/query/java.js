@@ -5,15 +5,7 @@ const varint = require("varint");
 
 const { Java } = require("@static/packets.js");
 const { ConnectionError } = require("@static/globals.js");
-const { show_hexy } = require("@lib/helpers.js");
-
-const connectionTimeout =
-  async (timeout, what) => await new Promise(
-    (_, reject) => setTimeout(
-      () => reject(new ConnectionError(what + ": Connection timed out")),
-      timeout
-    )
-  );
+const { show_hexy, TimeoutPromise } = require("@lib/helpers.js");
 
 const readJavaPacket = socket => {
   let listener;
@@ -59,7 +51,7 @@ const readJavaPacket = socket => {
 async function query(host, port, timeout) {
   validateArguments(...arguments);
 
-  let timeoutPromise = connectionTimeout(timeout, "Java Query");
+  let timeoutPromise = TimeoutPromise(timeout, "Java Query");
 
   console.group("Establishing connection");
 
