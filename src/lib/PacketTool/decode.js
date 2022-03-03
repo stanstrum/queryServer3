@@ -160,7 +160,10 @@ function decode(buffer, fixedByteLengths = []) {
       } break;
 
       case DT.VarIntString: {
-        // I have literally zero clue why I need to subtract three.
+        // // I have literally zero clue why I need to subtract three.
+        // const length = varint.decode(buffer) - 3;
+
+        // [UPDATE: apparently this works better]
         // I have literally zero clue why ... anything?
         const length = varint.decode(buffer) - (varint.decode.bytes + 1);
         // show_hexy(buffer.slice(offset, offset + varint.decode.bytes), '~');
