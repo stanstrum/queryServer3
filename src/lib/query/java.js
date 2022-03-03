@@ -88,6 +88,7 @@ async function query(host, port, timeout) {
   console.group("Sending handshake");
   write(handshake);
   console.groupEnd();
+
   console.group("Sending request");
   write(request);
   console.groupEnd();
@@ -119,6 +120,7 @@ async function query(host, port, timeout) {
 
   socket.end();
 
+  timeoutPromise.catch(() => {});
   return { latency, buffer: response };
 }
 
