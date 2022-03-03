@@ -81,6 +81,13 @@ const auto = () => ++ctr;
 
 const removeFormatting = string => string.replace(/§[0-9a-fk-or]/ig, "").trim();
 
+class ConnectionError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ConnectionError";
+  }
+}
+
 const TimeoutPromise =
   (timeout, what) => new Promise(
     (_, reject) => setTimeout(
@@ -95,5 +102,6 @@ module.exports = {
   show_hexy,
   auto,
   removeFormatting,
+  ConnectionError,
   TimeoutPromise
 };

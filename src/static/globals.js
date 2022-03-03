@@ -1,4 +1,4 @@
-const { auto } = require("@lib/helpers.js");
+const { auto, ConnectionError } = require("@lib/helpers.js");
 
 const DataTypes = {
   UByte                    : auto(),
@@ -23,13 +23,6 @@ const PacketTypes = {
 
 const RAKNET_MAGIC = "00ffff00fefefefefdfdfdfd12345678".hexToBuffer();
 const LEGACY_MAGIC = "fefd".hexToBuffer();
-
-class ConnectionError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ConnectionError";
-  }
-}
 
 module.exports = {
   DataTypes,
