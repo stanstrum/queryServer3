@@ -1,4 +1,4 @@
-const validateArguments = require("./validateArguments.js");
+const validateArguments = require("@lib/validateArguments.js");
 
 const net = require("net");
 const varint = require("varint");

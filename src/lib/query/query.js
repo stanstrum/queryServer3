@@ -1,5 +1,5 @@
-const validateArguments = require("./validateArguments.js");
-const ucpSendUntilReceive = require("./ucpSendUntilReceive.js");
+const validateArguments = require("@lib/validateArguments.js");
+const ucpSendUntilReceive = require("@lib/ucpSendUntilReceive.js");
 
 const crypto = require("crypto");
 const dgram = require("dgram");
