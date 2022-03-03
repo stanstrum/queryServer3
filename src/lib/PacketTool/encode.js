@@ -7,7 +7,7 @@ const {
 
 const varint = require("varint");
 
-// const { show_hexy } = require("@lib/helpers.js");
+const { show_hexy } = require("@lib/helpers.js");
 
 function assertOrThrow(key, type, error, ...assertions) {
   if (!assertions.every(assertion => assertion)) {
@@ -160,7 +160,7 @@ function encode(object) {
       throw e;
     }
 
-    // show_hexy(buffers[buffers.length - 1], '>');
+    show_hexy(buffers[buffers.length - 1], '>');
   }
 
   return this._packetize(buffers);
