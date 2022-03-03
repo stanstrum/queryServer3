@@ -17,7 +17,7 @@ async function query(hostname, port, timeout) {
 
   const socket = dgram.createSocket({ type: "udp4" });
 
-  const timeoutPromise = TimeoutPromise(timeout, new ConnectionError("Connection timed out"));
+  const timeoutPromise = TimeoutPromise(timeout, "Bedrock Query");
 
   const timeStart = Date.now();
 

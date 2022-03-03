@@ -17,10 +17,10 @@ const {
 //   strings: queryStrings
 // } = require("@lib/query/query.js");
 
-// const {
-//   query: queryBedrock,
+const {
+  query: queryBedrock,
 //   strings: bedrockStrings
-// } = require("@lib/query/bedrock.js");
+} = require("@lib/query/bedrock.js");
 
 const {
   query: queryJava,
@@ -140,10 +140,28 @@ async function queryServer(rawHost, rawPort = null) {
       }
     } break;
 
-    case 19132:
-      throw new Error("Probing Bedrock/MCPE servers is not implemented yet");
+    case 19132: {
+      console.group("Trying " + host + (port ? `:${port}` : "") + " as Bedrock");
+      const results = await queryBedrock(host, port, TIMEOUT_MS);
+      console.groupEnd();
 
-      break;
+      console.group("Decoding response packet");
+
+      if (typeof results?.latency !== "number") {
+        throw new Error("No latency returned from queryBedrock");
+      }
+
+      returnObject.latency = results.latency.toString();
+
+      if (!(typeof results?.buffer instanceof Buffer)) {
+        throw new Error("No buffer returned from queryBedrock");
+      }
+
+      const decoded = Bedrock.unconnected_pong.decode(results.buffer);
+
+      console.groupEnd();
+
+    } break;
 
     default:
       throw new Error("Detecting remote server type is not implemented yet");
