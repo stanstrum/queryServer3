@@ -1,25 +1,25 @@
 const { show_hexy, auto, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
 
-function udpSendUntilReceive(socket, data, interval, timeoutPromise) {
-  const timeStart = Date.now();
+function udpSendUntilReceive(socket, data, interval_ms, timeout_promise) {
+  const time_start = Date.now();
   let timed_out = false;
 
-  timeoutPromise.catch(() => { timed_out = true; });
+  timeout_promise.catch(() => { timed_out = true; });
 
   return new Promise((resolve, reject) => {
-    let intervalID;
+    let interval_id;
 
-    const listener = data => {
-      clearInterval(intervalID);
+    const listener = response => {
+      show_hexy(response, '<');
 
-      resolve(data);
+      clearInterval(interval_id);
+
+      resolve(response);
     };
 
-    socket.once("data", listener);
-
-    intervalID = setInterval(() => {
+    const interval_func = () => {
       if (timed_out) {
-        clearInterval(intervalID);
+        clearInterval(interval_id);
         socket.removeListener("data", listener);
 
         reject(new ConnectionError("Timed out"));
@@ -27,8 +27,13 @@ function udpSendUntilReceive(socket, data, interval, timeoutPromise) {
         return;
       }
 
+      show_hexy(data, '>');
       socket.send(data);
-    }, interval);
+    };
+
+    socket.once("data", listener);
+    interval_func();
+    interval_id = setInterval(interval_func, interval_ms);
   });
 }
 
