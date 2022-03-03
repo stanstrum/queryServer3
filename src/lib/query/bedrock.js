@@ -1,5 +1,5 @@
 const validateArguments = require("@lib/validateArguments.js");
-const ucpSendUntilReceive = require("@lib/ucpSendUntilReceive.js");
+const udpSendUntilReceive = require("@lib/udpSendUntilReceive.js");
 
 const crypto = require("crypto");
 const dgram = require("dgram");
@@ -36,10 +36,7 @@ async function query(hostname, port, timeout) {
     clientGUID: crypto.randomBytes(8)
   });
 
-  const buffer = await Promise.race([
-    ucpSendUntilReceive(socket, encoded, 1000),
-    timeoutPromise
-  ]);
+  const buffer = await udpSendUntilReceive(socket, encoded, 1000, timeoutPromise);
 
   return { latency, buffer };
 }

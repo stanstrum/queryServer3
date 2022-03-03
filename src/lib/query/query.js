@@ -1,5 +1,5 @@
 const validateArguments = require("@lib/validateArguments.js");
-const ucpSendUntilReceive = require("@lib/ucpSendUntilReceive.js");
+const udpSendUntilReceive = require("@lib/udpSendUntilReceive.js");
 
 const crypto = require("crypto");
 const dgram = require("dgram");
@@ -43,7 +43,7 @@ async function query(hostname, port, timeout) {
       challengeToken: Math.floor(Math.random() * 0x7FFFFFFF)
     });
 
-    const buffer = await ucpSendUntilReceive(socket, encoded, 1000, timeout);
+    const buffer = await udpSendUntilReceive(socket, encoded, 1000, timeout);
 
     const response = Query.response.decode(buffer);
 
@@ -60,7 +60,7 @@ async function query(hostname, port, timeout) {
       challengeToken: token
     });
 
-    var basic = await ucpSendUntilReceive(socket, encoded, 1000, timeout);
+    var basic = await udpSendUntilReceive(socket, encoded, 1000, timeout);
   } catch {}
 
   const encoded = Query.full_stat_request.encode({
@@ -71,7 +71,7 @@ async function query(hostname, port, timeout) {
     padding       : Buffer.alloc(4)
   });
 
-  const full = await ucpSendUntilReceive(socket, encoded, 1000, timeout);
+  const full = await udpSendUntilReceive(socket, encoded, 1000, timeout);
 
   return { latency, buffers: [ basic, full ] };
 }
