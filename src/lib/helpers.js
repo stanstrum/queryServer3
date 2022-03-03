@@ -74,7 +74,7 @@ function stringArrayToObject(stringArray) {
   return returnObject;
 }
 
-const show_hexy = (buf, pfx) => console.log(hexy(buf).trim().split('\n').map(line => pfx + ' ' + line).join('\n'));
+const show_hexy = (buf, pfx) => console.log(hexy(buf, { prefix: pfx + ' ' }));
 
 let ctr = 0;
 const auto = () => ++ctr;
