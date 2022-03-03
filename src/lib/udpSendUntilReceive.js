@@ -1,5 +1,4 @@
-const { show_hexy, auto, TimeoutPromise } = require("@lib/helpers.js");
-const { ConnectionError } = require("@static/globals.js");
+const { show_hexy, auto, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
 
 function udpSendUntilReceive(socket, data, interval, timeoutPromise) {
   const timeStart = Date.now();

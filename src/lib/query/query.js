@@ -6,9 +6,7 @@ const dgram = require("dgram");
 
 const { Query } = require("@static/packets.js");
 
-const { ConnectionError } = require("@static/globals.js");
-
-const { /*show_hexy,*/ stringArrayToObject, TimeoutPromise } = require("@lib/helpers.js");
+const { /*show_hexy,*/ stringArrayToObject, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
 
 const baseObject = { players: {} };
 async function query(hostname, port, timeout) {

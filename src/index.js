@@ -10,6 +10,7 @@ const {
   verifyHostname,
   // removeFormatting,
   // TimeoutPromise
+  ConnectionError
 } = require("@lib/helpers.js");
 
 // const {
@@ -28,7 +29,6 @@ const {
 } = require("@lib/query/java.js");
 
 const { Bedrock, Java, Query } = require("@static/packets.js");
-const { ConnectionError } = require("@static/globals.js");
 
 const TIMEOUT_MS = 5000;
 

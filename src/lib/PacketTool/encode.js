@@ -8,7 +8,6 @@ const {
 const varint = require("varint");
 
 // const { show_hexy } = require("@lib/helpers.js");
-const { ConnectionError } = require("@static/globals.js");
 
 function assertOrThrow(key, type, error, ...assertions) {
   if (!assertions.every(assertion => assertion)) {

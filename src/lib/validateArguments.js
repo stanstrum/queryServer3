@@ -1,6 +1,4 @@
-const { verifyHostname } = require("@lib/helpers.js");
-
-const { ConnectionError } = require("@static/globals.js");
+const { verifyHostname, ConnectionError } = require("@lib/helpers.js");
 
 function validateArguments(hostname, port, timeout) {
   if (!verifyHostname(hostname))

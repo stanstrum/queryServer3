@@ -1,4 +1,4 @@
-const { auto, ConnectionError } = require("@lib/helpers.js");
+const { auto } = require("@lib/helpers.js");
 
 const DataTypes = {
   UByte                    : auto(),

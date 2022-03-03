@@ -6,9 +6,7 @@ const dgram = require("dgram");
 
 const { Bedrock } = require("@static/packets.js");
 
-const { /*show_hexy,*/ stringArrayToObject, TimeoutPromise } = require("@lib/helpers.js");
-
-const { ConnectionError } = require("@static/globals.js");
+const { /*show_hexy,*/ stringArrayToObject, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
 
 async function query(hostname, port, timeout) {
   validateArguments(hostname, port, timeout);
