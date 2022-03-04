@@ -39,6 +39,7 @@ const TIMEOUT_MS = 5000;
  * with the optional port argument should one be provided
  */
 async function queryServer(rawHost, rawPort = null) {
+  // Parse arguments
   const [host, defaultPort] = rawHost.split(':', 2);
 
   if (!verifyHostname(host)) {
@@ -61,6 +62,7 @@ async function queryServer(rawHost, rawPort = null) {
   if (port < 0 || port > 65535)
     throw new Error("Port is out of range (0-65535)");
 
+  // Return structure
   const returnObject = {
     motd: null,
     version: null,
@@ -93,7 +95,7 @@ async function queryServer(rawHost, rawPort = null) {
       throw new Error("Detecting remote server type is not implemented yet");
   }
 
-  // Clean up returnObject strings
+  // Clean up returnObject values
   if (typeof returnObject.motd === "string") {
     returnObject.motd =
       returnObject.motd
