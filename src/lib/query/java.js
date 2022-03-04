@@ -4,8 +4,7 @@ const net = require("net");
 const varint = require("varint");
 
 const { Java } = require("@static/packets.js");
-const { ConnectionError } = require("@static/globals.js");
-const { show_hexy, TimeoutPromise } = require("@lib/helpers.js");
+const { show_hexy, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
 
 const readJavaPacket = socket => {
   let listener;
