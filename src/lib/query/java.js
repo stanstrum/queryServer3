@@ -14,29 +14,33 @@ function readJavaPacket(socket) {
     let offset = 0;
 
     listener = data => {
-      if (!buffer) {
-        let length = varint.decode(data, 0);
-        length += varint.decode.bytes;
+      try {
+        if (!buffer) {
+          let length = varint.decode(data, 0);
+          length += varint.decode.bytes;
 
         // console.log(`Received first chunk, allocating buffer with ${length} byte(s)`);
-        buffer = Buffer.alloc(length);
-      }
+          buffer = Buffer.alloc(length);
+        }
 
-      if (data.length + offset > buffer.length) {
-        const error_message = `Ran out of space buffer: buffer size is ${buffer.length} byte(s), offset is ${offset} byte(s), chunk length is ${data.length} byte(s)`;
+        if (data.length + offset > buffer.length) {
+          const error_message = `Ran out of space buffer: buffer size is ${buffer.length} byte(s), offset is ${offset} byte(s), chunk length is ${data.length} byte(s)`;
 
-        reject(new Error(error_message));
-      }
+          throw new Error(error_message);
+        }
 
-      data.copy(buffer, offset);
-      offset += data.length;
+        data.copy(buffer, offset);
+        offset += data.length;
 
-      if (buffer.length !== offset) {
+        if (buffer.length !== offset) {
         // console.log(`Copied ${data.length} byte(s) from handler, new offset is ${offset} byte(s)`);
-      } else {
+        } else {
         // console.log(`Copied last chunk of ${data.length} byte(s), total size is ${buffer.length} byte(s)`);
 
-        resolve(buffer);
+          resolve(buffer);
+        }
+      } catch (e) {
+        reject(e);
       }
     }
 
