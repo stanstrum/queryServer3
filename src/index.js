@@ -89,9 +89,6 @@ async function queryServer(rawHost, rawPort = null) {
         if (typeof responseAsObject !== "object")
           throw new Error("responseAsObject is not an object");
 
-        if (responseAsObject.favicon?.length > 100)
-          responseAsObject.favicon = "too long";
-
         // console.group("Decoded response object:");
         // console.dir(responseAsObject, { depth: null });
         // console.groupEnd();
