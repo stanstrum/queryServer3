@@ -20,7 +20,7 @@ const {
 // } = require("@lib/query/query.js");
 
 const {
-  query: queryBedrock,
+  queryBedrock,
 //   strings: bedrockStrings
 } = require("@lib/query/bedrock.js");
 
@@ -80,57 +80,11 @@ async function queryServer(rawHost, rawPort = null) {
     } break;
 
     case 19132: {
-      console.group("Trying " + host + (port ? `:${port}` : "") + " as Bedrock");
-      const results = await queryBedrock(host, port, TIMEOUT_MS);
-      console.groupEnd();
+      merge(
+        returnObject,
+        await queryBedrock(host, port, TIMEOUT_MS)
+      );
 
-      console.group("Decoding response packet");
-
-      if (typeof results?.latency !== "number") {
-        throw new Error("No latency returned from queryBedrock");
-      }
-
-      returnObject.latency = results.latency.toString();
-
-      if (!(results?.buffer instanceof Buffer)) {
-        throw new Error("No buffer returned from queryBedrock");
-      }
-
-      // https://wiki.vg/Raknet_Protocol#Unconnected_Pong
-      const decoded = Bedrock.unconnected_pong.decode(results.buffer, [8]);
-
-      // console.dir(decoded);
-
-      console.groupEnd();
-      console.group("Parsing serverID");
-
-      if (typeof decoded?.serverID !== "string")
-        throw new Error("Decoded buffer does not have serverID");
-
-      const [, motd1, , version, online, max, , motd2] = decoded.serverID.split(';');
-      const motd = [motd1, motd2].filter(line => line).join("\n");
-
-      if (!motd) {
-        throw new Error("No MOTD");
-      }
-
-      returnObject.motd = motd;
-
-      if (!version) {
-        throw new Error("No version");
-      }
-
-      returnObject.version = version;
-
-      if (!online || !max)
-        throw new Error("No online/max");
-
-      returnObject.players.online = online;
-      returnObject.players.max = max;
-
-      returnObject.players.list = [];
-
-      console.groupEnd();
     } break;
 
     default:
