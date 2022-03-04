@@ -96,6 +96,16 @@ const TimeoutPromise =
     )
   );
 
+const merge = (dst, src) => {
+  Object.keys(src).forEach((key) => {
+    if (!dst[key]) {
+      dst[key] = src[key];
+    } else if (typeof src[key] === 'object' && src[key] !== null && typeof dst[key] === 'object' && dst[key] !== null) {
+      merge(dst[key], src[key]);
+    }
+  });
+};
+
 module.exports = {
   verifyHostname,
   stringArrayToObject,
@@ -103,5 +113,6 @@ module.exports = {
   auto,
   removeFormatting,
   ConnectionError,
-  TimeoutPromise
+  TimeoutPromise,
+  merge
 };
