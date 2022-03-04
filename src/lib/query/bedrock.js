@@ -11,22 +11,22 @@ const { /*show_hexy,*/ stringArrayToObject, ConnectionError, TimeoutPromise } = 
 async function query(hostname, port, timeout) {
   validateArguments(hostname, port, timeout);
 
-  console.log("bedrock query", hostname, port);
-
-  const socket = dgram.createSocket({ type: "udp4" });
-
   const timeoutPromise = TimeoutPromise(timeout, "Bedrock Query");
 
-  const timeStart = Date.now();
+  console.group("Establishing connection")
+  const socket = await Promise.race([
+    new Promise((resolve, reject) => {
+      const _socket = dgram.createSocket({ type: "udp4" });
 
-  await new Promise((resolve, reject) => {
-    socket.once("error", e => reject(new ConnectionError(e.message)));
-    socket.once("connect", resolve);
+      _socket.once("error", e => reject(new ConnectionError(e.message)));
+      _socket.once("connect", () => resolve(_socket));
 
-    socket.connect(port, hostname);
-  });
-
-  const latency = Math.ceil(Date.now() - timeStart);
+      _socket.connect(port, hostname);
+    }),
+    timeoutPromise
+  ]);
+  console.log(`Connection established`);
+  console.groupEnd();
 
   const encoded = Bedrock.unconnected_ping.encode({
     time      : BigInt(Math.floor(Date.now() / 1000)),
@@ -34,7 +34,13 @@ async function query(hostname, port, timeout) {
     clientGUID: crypto.randomBytes(8)
   });
 
+  console.group("Sending packet until receipt");
+  const timeStart = Date.now();
   const buffer = await udpSendUntilReceive(socket, encoded, 1000, timeoutPromise);
+  const latency = Math.ceil(Date.now() - timeStart);
+  console.groupEnd();
+
+  console.log(`Received ${buffer.length} byte(s), latency is ${latency}ms`);
 
   return { latency, buffer };
 }

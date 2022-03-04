@@ -8,7 +8,7 @@ const Bedrock = {
     [
       { time      : DT.Int64BE        },
       { magic     : DT.RAKNET_MAGIC   },
-      { clientGUID: DT.FixedByteArray }
+      { clientGUID: DT.FixedByteArray }  // Long
     ],
     0x01,
     PacketTypes.Raknet
@@ -16,7 +16,7 @@ const Bedrock = {
   unconnected_pong: new PacketTool(
     [
       { time      : DT.Int64BE        },
-      { serverGUID: DT.FixedByteArray },
+      { serverGUID: DT.FixedByteArray }, // Long
       { magic     : DT.RAKNET_MAGIC   },
       { serverID  : DT.UShortString   }
     ],

@@ -153,7 +153,7 @@ async function queryServer(rawHost, rawPort = null) {
 
       returnObject.latency = results.latency.toString();
 
-      if (!(typeof results?.buffer instanceof Buffer)) {
+      if (!(results?.buffer instanceof Buffer)) {
         throw new Error("No buffer returned from queryBedrock");
       }
 
