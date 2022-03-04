@@ -50,6 +50,14 @@ const servers = [
 (async () => {
   const queryServer = require("../src");
 
+  const filterStack = e =>
+    (e?.stack || e.toString())
+      .split('\n')
+      .filter(
+        line => !/node:internal|\/tests\//.test(line)
+      )
+      .join('\n');
+
   try {
     for (const [ip, port] of servers) {
       console.group("Host " + (port ? `${ip}:${port}` : ip));
@@ -80,15 +88,16 @@ const servers = [
     }
   } catch (e) {
     console.error(
-      e.stack
-      ? e.stack
-          .split('\n')
-          .filter(
-            line => !/node:internal|\/tests\//.test(line)
-          )
-          .join('\n')
-      : e
+      filterStack(e)
     );
+
+    if (e instanceof AggregateError) {
+      console.group("Errors:");
+      for (const error of e.errors) {
+        console.log(filterStack(error));
+      }
+      console.groupEnd();
+    }
 
     process.exit(1);
   }
