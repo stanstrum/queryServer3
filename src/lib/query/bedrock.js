@@ -38,9 +38,8 @@ async function query(hostname, port, timeout) {
   const timeStart = Date.now();
   const buffer = await udpSendUntilReceive(socket, encoded, 1000, timeoutPromise);
   const latency = Math.ceil(Date.now() - timeStart);
-  console.groupEnd();
-
   console.log(`Received ${buffer.length} byte(s), latency is ${latency}ms`);
+  console.groupEnd();
 
   return { latency, buffer };
 }
