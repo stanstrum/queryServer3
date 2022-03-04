@@ -3,8 +3,8 @@ process.on("unhandledRejection", e => console.error("Unhandled Promise Rejection
 const servers = [
   ["mc.hypixel.net", 25565],
   // ["192.168.1.3", 25565],
-  ["pe.mineplex.com", 19132],
   ["play.lbsg.net", 19132],
+  ["us.mineplex.com", 25565],
   ["pe.mineplex.com", 19132],
   ["192.168.1.3", 25566],
   ["hub.mc-complex.com", ],
