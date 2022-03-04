@@ -160,7 +160,7 @@ function encode(object) {
       throw e;
     }
 
-    show_hexy(buffers[buffers.length - 1], '>');
+    // show_hexy(buffers[buffers.length - 1], '>');
   }
 
   return this._packetize(buffers);
