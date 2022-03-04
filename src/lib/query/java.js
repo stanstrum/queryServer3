@@ -6,7 +6,7 @@ const varint = require("varint");
 const { Java } = require("@static/packets.js");
 const { show_hexy, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
 
-const readJavaPacket = socket => {
+function readJavaPacket(socket) {
   let listener;
 
   return new Promise((resolve, reject) => {
@@ -47,9 +47,7 @@ const readJavaPacket = socket => {
     );
 };
 
-async function query(host, port, timeout) {
-  validateArguments(...arguments);
-
+async function getData(host, port, timeout) {
   let timeoutPromise = TimeoutPromise(timeout, "Java Query");
 
   console.group("Establishing connection");
@@ -123,6 +121,94 @@ async function query(host, port, timeout) {
   return { latency, buffer: response };
 }
 
+async function queryJava(host, port, timeout) {
+  validateArguments(...arguments);
+
+  const returnObject = {
+    motd: null,
+    version: null,
+    latency: null,
+    players: {
+      online: null,
+      max: null,
+      list: null
+    }
+  };
+
+  console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
+  const results = await getData(host, port, timeout);
+  const { buffer } = results;
+  console.groupEnd();
+
+  console.group("Decoding response packet");
+
+  if (typeof results.latency === "number") {
+    returnObject.latency = results.latency.toString();
+  }
+
+  try {
+    const decoded = Java.response.decode(buffer);
+    const responseAsObject = JSON.parse(decoded.jsonResponse);
+
+    if (typeof responseAsObject !== "object")
+      throw new Error("responseAsObject is not an object");
+
+    // console.group("Decoded response object:");
+    // console.dir(responseAsObject, { depth: null });
+    // console.groupEnd();
+
+    if (typeof responseAsObject.version?.name !== "string")
+      throw new Error("No version in responseAsObject");
+
+    returnObject.version = responseAsObject.version.name;
+
+    if (
+      responseAsObject.description?.extra instanceof Array &&
+      responseAsObject.description.extra.every(line => typeof line.text === "string")
+    ) {
+      returnObject.motd = responseAsObject.description.extra.map(({ text }) => text).join("");
+    } else if (typeof responseAsObject.description?.text === "string") {
+      returnObject.motd = responseAsObject.description.text;
+    } else if (typeof responseAsObject.description === "string") {
+      returnObject.motd = responseAsObject.description;
+    }
+
+    if (
+      typeof responseAsObject.players?.max    !== "number" ||
+      typeof responseAsObject.players?.online !== "number"
+    ) {
+      throw new Error("Invalid players structure");
+    }
+
+    returnObject.players.max = responseAsObject.players.max.toString();
+    returnObject.players.online = responseAsObject.players.online.toString();
+
+    if (
+      responseAsObject.players?.sample?.every(
+        entry => typeof entry?.id === "string" || typeof entry?.name === "string"
+      )
+    ) {
+      returnObject.players.list = responseAsObject.players.sample.map(({ id, name }) => ({ uuid: id, name }));
+    } else {
+      console.log("No player sample, defaulting to []");
+
+      returnObject.players.list = [];
+    }
+
+    console.groupEnd();
+
+  } catch (e) {
+    console.error(e?.stack || e);
+    console.groupEnd();
+
+    console.group("Failed to decode, trying strings");
+    throw new Error("Strings not implemented");
+    console.groupEnd();
+  }
+
+  return returnObject;
+}
+
 // function strings(buffer) {
 //   let beginOffset = 0;
 //   let endOffset = buffer.byteLength - 1;
@@ -143,6 +229,6 @@ async function query(host, port, timeout) {
 // }
 
 module.exports = {
-  query,
+  queryJava,
   // strings
 };
