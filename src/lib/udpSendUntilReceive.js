@@ -9,7 +9,16 @@ function udpSendUntilReceive(socket, data, interval_ms, timeout_promise) {
   return new Promise((resolve, reject) => {
     let interval_id;
 
-    const listener = response => {
+    const errorListener = error => {
+      clearInterval(interval_id);
+      socket.removeListener("message", messageListener);
+
+      reject(error);
+
+      return;
+    }
+
+    const messageListener = response => {
       show_hexy(response, '<');
 
       clearInterval(interval_id);
@@ -20,7 +29,8 @@ function udpSendUntilReceive(socket, data, interval_ms, timeout_promise) {
     const interval_func = () => {
       if (timed_out) {
         clearInterval(interval_id);
-        socket.removeListener("data", listener);
+        socket.removeListener("message", messageListener);
+        socket.removeListener("error", errorListener);
 
         reject(new ConnectionError("Timed out"));
 
@@ -31,9 +41,11 @@ function udpSendUntilReceive(socket, data, interval_ms, timeout_promise) {
       socket.send(data);
     };
 
-    socket.once("data", listener);
-    interval_func();
+    socket.once("message", messageListener);
+    socket.once("error", errorListener);
+
     interval_id = setInterval(interval_func, interval_ms);
+    interval_func();
   });
 }
 
