@@ -44,18 +44,19 @@ async function queryServer(rawHost, rawPort = null) {
 
   let port;
   if (rawPort) {
-    if (typeof rawPort === "number") {
-      port = rawPort;
-    } else {
+    if (typeof rawPort !== "number")
       throw new Error("Port argument is not a number");
-    }
+
+    port = rawPort;
   } else if (defaultPort) {
-    if (/^\d+$/.test(defaultPort)) {
-      port = Number.parseInt(defaultPort);
-    } else {
+    if (!/^\d+$/.test(defaultPort))
       throw new Error("Port section of host argument is not a number");
-    }
+
+    port = Number.parseInt(defaultPort);
   }
+
+  if (port < 0 || port > 65535)
+    throw new Error("Port is out of range (0-65535)");
 
   const returnObject = {
     motd: null,
