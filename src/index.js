@@ -101,7 +101,12 @@ async function queryServer(rawHost, rawPort = null) {
 
         returnObject.version = responseAsObject.version.name;
 
-        if (typeof responseAsObject.description?.text === "string") {
+        if (
+          responseAsObject.description?.extra instanceof Array &&
+          responseAsObject.description.extra.every(line => typeof line.text === "string")
+        ) {
+          returnObject.motd = responseAsObject.description.extra.map(({ text }) => text).join("");
+        } else if (typeof responseAsObject.description?.text === "string") {
           returnObject.motd = responseAsObject.description.text;
         } else if (typeof responseAsObject.description === "string") {
           returnObject.motd = responseAsObject.description;
