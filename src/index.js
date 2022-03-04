@@ -74,26 +74,45 @@ async function queryServer(rawHost, rawPort = null) {
     }
   };
 
+  // Determine what type of querying we should do
+  let promises;
   switch (port) {
-    case 25565: {
-      merge(
-        returnObject,
-        await queryJava(host, port, TIMEOUT_MS)
-      );
+    case 25565:
+      promises = [
+        queryJava(host, port, TIMEOUT_MS),
+        // queryQuery(host, port, TIMEOUT_MS)
+      ];
 
-    } break;
+      break;
+    case 19132:
+      promises = [
+        queryBedrock(host, port, TIMEOUT_MS),
+        // queryQuery(host, port, TIMEOUT_MS)
+      ];
 
-    case 19132: {
-      merge(
-        returnObject,
-        await queryBedrock(host, port, TIMEOUT_MS)
-      );
-
-    } break;
-
-    default:
-      throw new Error("Detecting remote server type is not implemented yet");
+      break;
+    default: {
+      promises = [
+        queryJava(host, 25565, TIMEOUT_MS),
+        // queryBedrock(host, 19132, TIMEOUT_MS),
+        // queryQuery(host, 25565, TIMEOUT_MS),
+        // queryQuery(host, 19132, TIMEOUT_MS)
+      ];
+    }
   }
+
+  const results = await Promise.allSettled(promises);
+
+  if (results.every(({ status }) => status === "rejected"))
+    throw new AggregateError(
+      results.map(({ reason }) => reason),
+      "All query promises rejected"
+    );
+
+  results
+    .filter(({ status }) => status === "fulfilled")
+    .map(({ value }) => value)
+    .forEach(obj => merge(returnObject, obj));
 
   // Clean up returnObject values
   if (typeof returnObject.motd === "string") {
