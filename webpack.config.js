@@ -3,12 +3,12 @@ var webpack = require("webpack");
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 
-const PROD = !!JSON.parse(process.env.PROD || '0');
+const debug = process.env.NODE_ENV !== "production";
 
 module.exports = {
   entry: "./src/index.js",
   target: "node",
-  mode: "development",
+  mode: process.env.NODE_ENV || "none",
   devtool: false,
   output: {
     enabledLibraryTypes: ["umd"],
@@ -25,13 +25,14 @@ module.exports = {
     }
   },
   optimization: {
-    minimize: PROD,
+    minimize: !debug,
     minimizer: [
       (compiler) => {
         new TerserPlugin({
           parallel: true,
           terserOptions: {
-            format: { comments: false }
+            format: { comments: false },
+            compress: { drop_console: true }
           },
           extractComments: false
         }).apply(compiler)
@@ -44,6 +45,5 @@ module.exports = {
         WEBPACK: 1
       }
     })
-  ],
-  // stats: "verbose"
+  ]
 };
