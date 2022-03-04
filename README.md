@@ -7,7 +7,7 @@ Install instructions:
 git clone https://github.com/stanstrum/queryServer3.git/
 ```
 2. Run `npm install`
-3. Run `npm run webpack`
+3. Run `npm run build`
 4. Copy the generated `queryServer.js` file from the `dist/` directory into your dependencies folder
 5. Use as follows:
 ```
