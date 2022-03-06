@@ -179,9 +179,9 @@ async function queryJava(host, port, timeout) {
     if (typeof responseAsObject !== "object")
       throw new Error("responseAsObject is not an object");
 
-    console.group("Decoded response object:");
-    console.dir(responseAsObject, { depth: null });
-    console.groupEnd();
+    // console.group("Decoded response object:");
+    // console.dir(responseAsObject, { depth: null });
+    // console.groupEnd();
 
     if (typeof responseAsObject.version?.name !== "string")
       throw new Error("No version in responseAsObject");
