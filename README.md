@@ -25,7 +25,7 @@ function queryServer(sockAddr: string): Promise<QueryResult>;
 function queryServer(host: string, port: number): Promise<QueryResult>;
 ````
 
-Install instructions:
+#### Install instructions:
 1. Clone the repository
 ```sh
 git clone https://github.com/stanstrum/queryServer3.git/
