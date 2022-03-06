@@ -21,6 +21,8 @@ function udpSendUntilReceive(socket, data, interval_ms, timeout_promise) {
     const messageListener = response => {
       clearInterval(interval_id);
 
+      // show_hexy(response, '<');
+
       resolve(response);
     };
 
@@ -34,6 +36,8 @@ function udpSendUntilReceive(socket, data, interval_ms, timeout_promise) {
 
         return;
       }
+
+      // show_hexy(data, '>');
 
       socket.send(data);
     };

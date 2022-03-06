@@ -16,10 +16,10 @@ const {
   merge
 } = require("@lib/helpers.js");
 
-// const {
-//   query: queryQuery,
+const {
+  queryQuery,
 //   strings: queryStrings
-// } = require("@lib/query/query.js");
+} = require("@lib/query/query.js");
 
 const {
   queryBedrock,
@@ -84,23 +84,23 @@ async function queryServer(rawHost, rawPort = null) {
     case 25565:
       promises = [
         queryJava(host, port, TIMEOUT_MS),
-        // queryQuery(host, port, TIMEOUT_MS)
+        queryQuery(host, port, TIMEOUT_MS)
       ];
 
       break;
     case 19132:
       promises = [
         queryBedrock(host, port, TIMEOUT_MS),
-        // queryQuery(host, port, TIMEOUT_MS)
+        queryQuery(host, port, TIMEOUT_MS)
       ];
 
       break;
     default: {
       promises = [
         queryJava(host, 25565, TIMEOUT_MS),
-        // queryBedrock(host, 19132, TIMEOUT_MS),
-        // queryQuery(host, 25565, TIMEOUT_MS),
-        // queryQuery(host, 19132, TIMEOUT_MS)
+        queryBedrock(host, 19132, TIMEOUT_MS),
+        queryQuery(host, 25565, TIMEOUT_MS),
+        queryQuery(host, 19132, TIMEOUT_MS)
       ];
     }
   }
@@ -133,10 +133,21 @@ async function queryServer(rawHost, rawPort = null) {
         .map(line => line.trim())
         .filter(line => line.length)
         .join('\n');
+  } else {
+    returnObject.motd = "";
   }
 
+  returnObject.version ||= "Unknown";
+  returnObject.players.list &&= returnObject.players.list.map(({ uuid, name }) => ({ uuid, name: name.replace(/§[0-9a-fk-or]/ig, "") }));
   returnObject.players.list ||= [];
-  returnObject.players.type ||= "Unknown";
+  returnObject.type ||= "Unknown";
+
+  try {
+    const obj = JSON.parse(returnObject.motd.replace(/-/g, '"'));
+
+    if (typeof obj?.name === "string")
+      returnObject.motd ||= obj?.name;
+  } catch {}
 
   return returnObject;
 }
