@@ -20,9 +20,9 @@ interface QueryResult {
   type: string,
 }
 
-function queryServer(sockAddr: string): Promise<QueryResult>;
+declare function queryServer(sockAddr: string): Promise<QueryResult>;
 // or ...
-function queryServer(host: string, port: number): Promise<QueryResult>;
+declare function queryServer(host: string, port: number): Promise<QueryResult>;
 ````
 
 #### Install instructions:
