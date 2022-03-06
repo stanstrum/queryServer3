@@ -93,7 +93,7 @@ async function getData(host, port, timeout) {
 
   // socket.on("data", data => show_hexy(data, '<'));
   const write = data => {
-    show_hexy(data, '>');
+    // show_hexy(data, '>');
     socket.write(data);
   };
 
