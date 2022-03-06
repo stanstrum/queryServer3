@@ -128,7 +128,7 @@ async function queryServer(rawHost, rawPort = null) {
   if (typeof returnObject.motd === "string") {
     returnObject.motd =
       returnObject.motd
-        .replace(/§[0-9a-fk-or]/ig, "")
+        .replace(/[§\uFFFD][0-9a-fk-or]/ig, "")
         .split('\n')
         .map(line => line.trim())
         .filter(line => line.length)

@@ -81,8 +81,7 @@ async function queryQuery(host, port, timeout) {
     players: {
       online: null,
       max: null,
-    },
-    type: "Bedrock"
+    }
   };
 
   const { latency, basic_buffer, full_buffer } = await getData(host, port, timeout);
