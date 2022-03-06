@@ -190,9 +190,10 @@ async function queryJava(host, port, timeout) {
 
     if (
       responseAsObject.description?.extra instanceof Array &&
-      responseAsObject.description.extra.every(line => typeof line.text === "string")
+      responseAsObject.description.extra.every(line => typeof line.text === "string" || line.extra instanceof Array)
     ) {
-      returnObject.motd = responseAsObject.description.extra.map(({ text }) => text).join("");
+      returnObject.motd = responseAsObject.description.extra.map(
+        ({ text, extra }) => text || extra.map(({ text }) => text).join("")).join("");
     } else if (typeof responseAsObject.description?.text === "string") {
       returnObject.motd = responseAsObject.description.text;
     } else if (typeof responseAsObject.description === "string") {
@@ -221,8 +222,12 @@ async function queryJava(host, port, timeout) {
       // returnObject.players.list = [];
     }
 
-    if (responseAsObject?.favicon) {
+    if (typeof responseAsObject?.favicon === "string") {
       returnObject.favicon = responseAsObject.favicon;
+    }
+
+    if (typeof responseAsObject.modinfo?.type === "string") {
+      returnObject.type = `${responseAsObject.modinfo.type} ${returnObject.type}`;
     }
 
     console.groupEnd();
