@@ -54,8 +54,8 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
     players: {
       online: null,
       max: null,
-      list: null
-    }
+    },
+    type: "Bedrock"
   };
 
   console.group("Trying " + host + (port ? `:${port}` : "") + " as Bedrock");
@@ -68,7 +68,7 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
     throw new Error("No latency returned from queryBedrock");
   }
 
-  returnObject.latency = results.latency.toString();
+  returnObject.latency = results.latency;
 
   if (!(results?.buffer instanceof Buffer)) {
     throw new Error("No buffer returned from queryBedrock");
@@ -100,13 +100,13 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
 
   returnObject.version = version;
 
-  if (!online || !max)
+  if (!/^\d+$/.test(online) || !/^\d+$/.test(max))
     throw new Error("No online/max");
 
-  returnObject.players.online = online;
-  returnObject.players.max = max;
+  returnObject.players.online = Number.parseInt(online);
+  returnObject.players.max = Number.parseInt(max);
 
-  returnObject.players.list = [];
+  // returnObject.players.list = [];
 
   console.groupEnd();
 

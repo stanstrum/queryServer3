@@ -71,11 +71,15 @@ async function queryServer(rawHost, rawPort = null) {
       online: null,
       max: null,
       list: null
-    }
+    },
+    favicon: null,
+    ip: host,
+    type: null
   };
 
   // Determine what type of querying we should do
   let promises;
+  let types;
   switch (port) {
     case 25565:
       promises = [
@@ -112,18 +116,27 @@ async function queryServer(rawHost, rawPort = null) {
   results
     .filter(({ status }) => status === "fulfilled")
     .map(({ value }) => value)
-    .forEach(obj => merge(returnObject, obj));
+    .forEach(obj => {
+      if (returnObject.type && returnObject.type !== obj.type) {
+        returnObject.type = "Crossplay";
+      }
+
+      merge(returnObject, obj);
+    });
 
   // Clean up returnObject values
   if (typeof returnObject.motd === "string") {
     returnObject.motd =
       returnObject.motd
-      .replace(/§[0-9a-fk-or]/ig, "")
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length)
-      .join('\n');
+        .replace(/§[0-9a-fk-or]/ig, "")
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length)
+        .join('\n');
   }
+
+  returnObject.players.list ||= [];
+  returnObject.players.type ||= "Unknown";
 
   return returnObject;
 }

@@ -71,14 +71,20 @@ const servers = [
       console.groupEnd();
       if (typeof response?.motd            !== "string" ||
           typeof response?.version         !== "string" ||
-          typeof response?.latency         !== "string" ||
+          typeof response?.latency         !== "number" ||
           typeof response?.players         !== "object" ||
-          typeof response?.players?.online !== "string" ||
-          typeof response?.players?.max    !== "string" ||
+          typeof response?.players?.online !== "number" ||
+          typeof response?.players?.max    !== "number" ||
+          typeof response?.ip              !== "string" ||
+          typeof response?.type            !== "string" ||
           !(response?.players?.list instanceof Array)   ||
           response?.players?.list?.some(
             entry => typeof entry?.name    !== "string" ||
                      typeof entry?.uuid    !== "string"
+          )                                             ||
+          (
+            response?.favicon                           &&
+            typeof response?.favicon !== "string"
           )
       ) {
         throw new Error("Returned object is not of correct format");

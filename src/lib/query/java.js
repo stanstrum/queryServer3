@@ -91,7 +91,7 @@ async function getData(host, port, timeout) {
   console.log(`Connection established`);
   console.groupEnd();
 
-  socket.on("data", data => show_hexy(data, '<'));
+  // socket.on("data", data => show_hexy(data, '<'));
   const write = data => {
     show_hexy(data, '>');
     socket.write(data);
@@ -156,7 +156,9 @@ async function queryJava(host, port, timeout) {
       online: null,
       max: null,
       list: null
-    }
+    },
+    favicon: null,
+    type: "Java"
   };
 
   console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
@@ -167,7 +169,7 @@ async function queryJava(host, port, timeout) {
   console.group("Decoding response packet");
 
   if (typeof results.latency === "number") {
-    returnObject.latency = results.latency.toString();
+    returnObject.latency = results.latency;
   }
 
   try {
@@ -204,8 +206,8 @@ async function queryJava(host, port, timeout) {
       throw new Error("Invalid players structure");
     }
 
-    returnObject.players.max = responseAsObject.players.max.toString();
-    returnObject.players.online = responseAsObject.players.online.toString();
+    returnObject.players.max = responseAsObject.players.max;
+    returnObject.players.online = responseAsObject.players.online;
 
     if (
       responseAsObject.players?.sample?.every(
@@ -214,9 +216,13 @@ async function queryJava(host, port, timeout) {
     ) {
       returnObject.players.list = responseAsObject.players.sample.map(({ id, name }) => ({ uuid: id, name }));
     } else {
-      console.log("No player sample, defaulting to []");
+      console.log("No player sample");
 
-      returnObject.players.list = [];
+      // returnObject.players.list = [];
+    }
+
+    if (responseAsObject?.favicon) {
+      returnObject.favicon = responseAsObject.favicon;
     }
 
     console.groupEnd();
