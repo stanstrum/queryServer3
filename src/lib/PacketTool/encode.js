@@ -68,6 +68,21 @@ function encode(object) {
           buffers.push(buffer);
         } break;
 
+        case DT.UShortBE: {
+          assertOrThrow(
+            key, datatype, "a whole number between 0 and 65535",
+            typeof value === "number",
+            value >= 0,
+            value <= 65535,
+            value % 1 === 0
+          );
+
+          const buffer = Buffer.alloc(2);
+
+          buffer.writeUInt16BE(value);
+          buffers.push(buffer);
+        } break;
+
         case DT.Int32BE: {
           assertOrThrow(
             key, datatype, "a whole number between -2147483648 and 2147483647",

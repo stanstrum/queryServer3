@@ -3,6 +3,7 @@ const { auto } = require("@lib/helpers.js");
 const DataTypes = {
   UByte                    : auto(),
   UShortLE                 : auto(),
+  UShortBE                 : auto(),
   Int32BE                  : auto(),
   Int64BE                  : auto(),
   VarInt                   : auto(),

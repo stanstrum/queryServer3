@@ -31,7 +31,7 @@ const Java = {
     [
       { protocolVersion: DT.VarInt       },
       { serverAddress  : DT.VarIntString },
-      { serverPort     : DT.UShortLE     },
+      { serverPort     : DT.UShortBE     },
       { nextState      : DT.VarInt       }
     ],
     0x00,
