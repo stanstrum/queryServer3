@@ -73,7 +73,7 @@ async function queryServer(rawHost, rawPort = null) {
       list: null
     },
     favicon: null,
-    ip: host,
+    ip: host.toLowerCase(),
     type: null
   };
 

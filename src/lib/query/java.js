@@ -179,23 +179,27 @@ async function queryJava(host, port, timeout) {
     if (typeof responseAsObject !== "object")
       throw new Error("responseAsObject is not an object");
 
-    // console.group("Decoded response object:");
-    // console.dir(responseAsObject, { depth: null });
-    // console.groupEnd();
+    console.group("Decoded response object:");
+    console.dir(responseAsObject, { depth: null });
+    console.groupEnd();
 
     if (typeof responseAsObject.version?.name !== "string")
       throw new Error("No version in responseAsObject");
 
     returnObject.version = responseAsObject.version.name;
 
-    if (
-      responseAsObject.description?.extra instanceof Array &&
-      responseAsObject.description.extra.every(line => typeof line.text === "string" || line.extra instanceof Array)
-    ) {
-      returnObject.motd = responseAsObject.description.extra.map(
-        ({ text, extra }) => text || extra.map(({ text }) => text).join("")).join("");
-    } else if (typeof responseAsObject.description?.text === "string") {
-      returnObject.motd = responseAsObject.description.text;
+    if (typeof responseAsObject.description === "object") {
+      const recurseFn = obj => {
+        if (typeof obj?.text === "string") {
+          returnObject.motd ||= "";
+          returnObject.motd += obj.text;
+        }
+
+        if (obj?.extra instanceof Array)
+          obj.extra.forEach(recurseFn);
+      }
+
+      recurseFn(responseAsObject.description);
     } else if (typeof responseAsObject.description === "string") {
       returnObject.motd = responseAsObject.description;
     }
