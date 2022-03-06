@@ -10,17 +10,29 @@ function readJavaPacket(socket) {
   let listener;
 
   return new Promise((resolve, reject) => {
+    let pre_buf;
     let buffer;
     let offset = 0;
 
     listener = data => {
       try {
         if (!buffer) {
-          let length = varint.decode(data, 0);
-          length += varint.decode.bytes;
+          let length;
 
-        // console.log(`Received first chunk, allocating buffer with ${length} byte(s)`);
+          if (pre_buf) {
+            length = varint.decode(Buffer.concat([ pre_buf, data ]));
+          } else {
+            length = varint.decode(data);
+          }
+
+          length += varint.decode.bytes;
+          // console.log(`Received first chunk, allocating buffer with ${length} byte(s)`);
           buffer = Buffer.alloc(length);
+
+          if (pre_buf) {
+            pre_buf.copy(buffer);
+            offset += pre_buf.length;
+          }
         }
 
         if (data.length + offset > buffer.length) {
@@ -33,14 +45,22 @@ function readJavaPacket(socket) {
         offset += data.length;
 
         if (buffer.length !== offset) {
-        // console.log(`Copied ${data.length} byte(s) from handler, new offset is ${offset} byte(s)`);
+          // console.log(`Copied ${data.length} byte(s) from handler, new offset is ${offset} byte(s)`);
         } else {
-        // console.log(`Copied last chunk of ${data.length} byte(s), total size is ${buffer.length} byte(s)`);
+          // console.log(`Copied last chunk of ${data.length} byte(s), total size is ${buffer.length} byte(s)`);
 
           resolve(buffer);
         }
       } catch (e) {
-        reject(e);
+        if (!buffer && e instanceof RangeError) {
+          // console.log("Failed to read varint, saving pre_buf of " + data.length + " byte(s)");
+
+          pre_buf = data;
+
+          return;
+        } else {
+          reject(e);
+        }
       }
     }
 
@@ -71,9 +91,9 @@ async function getData(host, port, timeout) {
   console.log(`Connection established`);
   console.groupEnd();
 
-  // socket.on("data", data => show_hexy(data, '<'));
+  socket.on("data", data => show_hexy(data, '<'));
   const write = data => {
-    // show_hexy(data, '>');
+    show_hexy(data, '>');
     socket.write(data);
   };
 
@@ -143,7 +163,7 @@ async function queryJava(host, port, timeout) {
   const results = await getData(host, port, timeout);
   const { buffer } = results;
   console.groupEnd();
-
+  
   console.group("Decoding response packet");
 
   if (typeof results.latency === "number") {
