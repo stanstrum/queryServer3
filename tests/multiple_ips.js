@@ -65,6 +65,8 @@ const servers = [
 
       var response = await queryServer(ip, port);
       console.groupEnd();
+
+      response.favicon &&= response.favicon.length.toString() + " byte(s)";
       console.group("Result from queryServer:");
       console.dir(response, { depth: null });
 
