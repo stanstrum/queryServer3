@@ -133,10 +133,9 @@ async function queryServer(rawHost, rawPort = null) {
         .map(line => line.trim())
         .filter(line => line.length)
         .join('\n');
-  } else {
-    returnObject.motd = "";
   }
 
+  returnObject.motd ||= "";
   returnObject.version ||= "Unknown";
   returnObject.players.list &&= returnObject.players.list.map(({ uuid, name }) => ({ uuid, name: name.replace(/§[0-9a-fk-or]/ig, "") }));
   returnObject.players.list ||= [];
