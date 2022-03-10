@@ -17,7 +17,7 @@ const servers = [
   ["org.archonhq.net", ],
   ["play.valatic.net", ],
   ["Play.datblock.com", ],
-  ["minehut.com", ],
+  // ["minehut.com", ],
   ["hub.opblocks.com", ],
   ["play.anubismc.com", ],
   ["play.immortal.com", ],
