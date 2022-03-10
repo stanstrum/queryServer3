@@ -189,17 +189,9 @@ async function queryJava(host, port, timeout) {
     returnObject.version = responseAsObject.version.name;
 
     if (typeof responseAsObject.description === "object") {
-      const recurseFn = obj => {
-        if (typeof obj?.text === "string") {
-          returnObject.motd ||= "";
-          returnObject.motd += obj.text;
-        }
+      const recurseFn = ({ text, extra }) => (text ?? "") + (extra ?? []).reduce((prev, curr) => prev + recurseFn(curr), "");
 
-        if (obj?.extra instanceof Array)
-          obj.extra.forEach(recurseFn);
-      }
-
-      recurseFn(responseAsObject.description);
+      returnObject.motd = recurseFn(responseAsObject.description);
     } else if (typeof responseAsObject.description === "string") {
       returnObject.motd = responseAsObject.description;
     }
