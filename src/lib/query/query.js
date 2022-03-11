@@ -12,6 +12,7 @@ async function getData(hostname, port, timeout) {
   const timeoutPromise = TimeoutPromise(timeout, "Query Query");
 
   console.group("Establishing connection")
+
   const socket = await Promise.race([
     new Promise((resolve, reject) => {
       const _socket = dgram.createSocket({ type: "udp4" });

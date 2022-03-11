@@ -25,7 +25,7 @@ async function getData(hostname, port, timeout) {
     }),
     timeoutPromise
   ]);
-  console.log(`Connection established`);
+  console.log("Connection established");
   console.groupEnd();
 
   const encoded = Bedrock.unconnected_ping.encode({

@@ -88,7 +88,7 @@ async function getData(host, port, timeout) {
     timeoutPromise
   ]);
 
-  console.log(`Connection established`);
+  console.log("Connection established");
   console.groupEnd();
 
   // socket.on("data", data => show_hexy(data, '<'));
