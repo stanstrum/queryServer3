@@ -84,7 +84,11 @@ async function queryQuery(host, port, timeout) {
     }
   };
 
+  console.group("Trying " + host + (port ? `:${port}` : "") + " as Query");
   const { latency, basic_buffer, full_buffer } = await getData(host, port, timeout);
+  console.groupEnd();
+
+  console.group("Decoding response packet");
 
   if (typeof latency !== "number")
     throw new Error("No latency");
@@ -121,6 +125,8 @@ async function queryQuery(host, port, timeout) {
       returnObject.version = basic.version;
     }
   }
+
+  console.groupEnd();
 
   return returnObject;
 }
