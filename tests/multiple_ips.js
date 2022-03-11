@@ -1,4 +1,6 @@
-process.on("unhandledRejection", e => console.error("Unhandled Promise Rejection:\n" + e.stack || e));
+global.Promise = require("bluebird");
+
+process.on("unhandledRejection", (error, promise) => console.error(`Unhandled Promise rejection at ${promise}:\n${(error?.stack) || error}`));
 
 const servers = [
   ["mc.hypixel.net", 25565],
