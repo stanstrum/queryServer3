@@ -1,5 +1,3 @@
-global.Promise = require("bluebird");
-
 process.on("unhandledRejection", (error, promise) => console.error(`Unhandled Promise rejection at ${promise}:\n${(error?.stack) || error}`));
 
 const servers = [
