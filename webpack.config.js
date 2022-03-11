@@ -41,9 +41,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env": {
-        WEBPACK: 1
-      }
-    })
+      "process.env.WEBPACK": 1
+    }),
+    new webpack.EnvironmentPlugin(["NODE_ENV"])
   ]
 };

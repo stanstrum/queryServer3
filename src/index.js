@@ -78,30 +78,42 @@ async function queryServer(rawHost, rawPort = null) {
   };
 
   // Determine what type of querying we should do
-  let promises;
-  let types;
+  let calls = [];
   switch (port) {
     case 25565:
-      promises = [
-        queryJava(host, port, TIMEOUT_MS),
-        queryQuery(host, port, TIMEOUT_MS)
-      ];
+      calls.push([queryJava, [host, port, TIMEOUT_MS]]);
+      calls.push([queryQuery, [host, port, TIMEOUT_MS]]);
 
       break;
     case 19132:
-      promises = [
-        queryBedrock(host, port, TIMEOUT_MS),
-        queryQuery(host, port, TIMEOUT_MS)
-      ];
+      calls.push([queryBedrock, [host, port, TIMEOUT_MS]]);
+      calls.push([queryQuery, [host, port, TIMEOUT_MS]]);
 
       break;
     default: {
-      promises = [
-        queryJava(host, 25565, TIMEOUT_MS),
-        queryBedrock(host, 19132, TIMEOUT_MS),
-        queryQuery(host, 25565, TIMEOUT_MS),
-        queryQuery(host, 19132, TIMEOUT_MS)
-      ];
+      calls.push([queryJava, [host, 25565, TIMEOUT_MS]]);
+      calls.push([queryBedrock, [host, 19132, TIMEOUT_MS]]);
+      calls.push([queryQuery, [host, 25565, TIMEOUT_MS]]);
+      calls.push([queryQuery, [host, 19132, TIMEOUT_MS]]);
+    }
+  }
+
+  let promises;
+  if (process.env.NODE_ENV === "production") {
+    promises = calls.map(([ func, args ]) => func.apply(null, args));
+  } else {
+    promises = [];
+
+    for (const [ func, args ] of calls) {
+      try {
+        const result = await func.apply(null, args)
+
+        promises.push(
+          Promise.resolve(result)
+        );
+      } catch (e) {
+        promises.push(Promise.reject(e));
+      }
     }
   }
 

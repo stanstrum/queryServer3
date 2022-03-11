@@ -50,7 +50,11 @@ const servers = [
 ];
 
 (async () => {
-  const queryServer = require("../src");
+  if (process.env.NODE_ENV === "production") {
+    var queryServer = require("../dist/queryServer.js");
+  } else {
+    var queryServer = require("../src");
+  }
 
   const filterStack = e =>
     (e?.stack || e.toString())
