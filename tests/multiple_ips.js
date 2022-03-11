@@ -47,6 +47,14 @@ const servers = [
   ["play.static-studios.net", ]
 ];
 
+const _group = console.group;
+const _groupEnd = console.groupEnd;
+
+let indentctr = 0;
+console.group = (...args) => { indentctr++; return _group.apply(console, args); }
+console.groupEnd = (...args) => { if (indentctr > 0) { indentctr--; } return _groupEnd.apply(console, args); }
+const resetIndentation = () => { while (indentctr) console.groupEnd(); }
+
 (async () => {
   if (process.env.NODE_ENV === "production") {
     var queryServer = require("../dist/queryServer.js");
@@ -96,7 +104,7 @@ const servers = [
         throw new Error("Returned object is not of correct format");
       }
 
-      console.groupEnd();
+      resetIndentation();
     }
   } catch (e) {
     console.error(
