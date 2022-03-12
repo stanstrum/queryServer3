@@ -100,26 +100,24 @@ async function queryServer(rawHost, rawPort = null) {
     }
   }
 
-  let promises;
+  let results;
   if (process.env.NODE_ENV === "production") {
-    promises = calls.map(([ func, args ]) => func.apply(null, args));
+    results = Promise.allSettled(
+      calls.map(([ func, args ]) => func.apply(null, args))
+    );
   } else {
-    promises = [];
+    results = [];
 
     for (const [ func, args ] of calls) {
       try {
-        const result = await func.apply(null, args)
+        const result = await func.apply(null, args);
 
-        promises.push(
-          Promise.resolve(result)
-        );
+        results.push({ status: "fulfilled", value: result });
       } catch (e) {
-        promises.push(Promise.reject(e));
+        results.push({ status: "rejected", reason: e });
       }
     }
   }
-
-  const results = await Promise.allSettled(promises);
 
   if (results.every(({ status }) => status === "rejected"))
     throw new AggregateError(
@@ -159,9 +157,14 @@ async function queryServer(rawHost, rawPort = null) {
     const obj = JSON.parse(returnObject.motd.replace(/-/g, '"'));
 
     if (typeof obj?.name === "string")
-      returnObject.motd ||= obj?.name;
+      returnObject.motd = obj?.name;
   } catch {}
 
+  results
+    .map((result, idx) => [result, idx])
+    .filter(([{ status }]) => status === "rejected")
+    .map(([{ reason }, idx]) => [reason, idx])
+    .forEach(([reason, idx]) => console.log(`${calls[idx][0].name}: ${reason[1]?.stack || reason.toString()}`));
   return returnObject;
 }
 
