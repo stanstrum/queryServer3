@@ -1,7 +1,5 @@
 "use strict";
 
-process.on("unhandledRejection", (reason, promise) => console.log(`Unhandled Rejection at ${promise}, ${reason?.stack || reason.toString()}`));
-
 const fs = require("fs");
 const uuid = require("uuid");
 
