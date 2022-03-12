@@ -79,8 +79,7 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
 
   // console.dir(decoded);
 
-  console.groupEnd();
-  console.group("Parsing serverID");
+  console.log("Parsing serverID");
 
   if (typeof decoded?.serverID !== "string")
     throw new Error("Decoded buffer does not have serverID");
@@ -108,6 +107,7 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
 
   // returnObject.players.list = [];
 
+  console.log("Done");
   console.groupEnd();
 
   return returnObject;
