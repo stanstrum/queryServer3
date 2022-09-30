@@ -35,6 +35,11 @@ const { Bedrock, Java, Query } = require("@static/packets.js");
 
 const TIMEOUT_MS = 5000;
 
+const util = require("util");
+const dns = require("node:dns");
+
+const srvResolve = util.promisify(dns.resolveSrv);
+
 /* "rawHost" may have a port in it, which should be overridden
  * with the optional port argument should one be provided
  */
@@ -62,6 +67,11 @@ async function queryServer(rawHost, rawPort = null) {
   if (port < 0 || port > 65535)
     throw new Error("Port is out of range (0-65535)");
 
+  let srvs;
+  try {
+    srvs = await srvResolve(`_minecraft._tcp.${host}`);
+  } catch {};
+
   // Return structure
   const returnObject = {
     motd: null,
@@ -78,29 +88,42 @@ async function queryServer(rawHost, rawPort = null) {
   };
 
   // Determine what type of querying we should do
-  let calls = [];
-  switch (port) {
-    case 25565:
-      calls.push([queryJava, [host, port, TIMEOUT_MS]]);
-      calls.push([queryQuery, [host, port, TIMEOUT_MS]]);
+  const calls = [];
 
-      break;
-    case 19132:
-      calls.push([queryBedrock, [host, port, TIMEOUT_MS]]);
-      calls.push([queryQuery, [host, port, TIMEOUT_MS]]);
+  const switchPort = (thisHost, thisPort) => {
+    if (thisPort)
+      calls.push([queryQuery, [thisHost, thisPort, TIMEOUT_MS]]);
 
-      break;
-    default: {
-      calls.push([queryJava, [host, 25565, TIMEOUT_MS]]);
-      calls.push([queryBedrock, [host, 19132, TIMEOUT_MS]]);
-      calls.push([queryQuery, [host, 25565, TIMEOUT_MS]]);
-      calls.push([queryQuery, [host, 19132, TIMEOUT_MS]]);
+    switch (thisPort) {
+      case 25565:
+        calls.push([queryJava, [thisHost, thisPort, TIMEOUT_MS]]);
+
+        break;
+      case 19132:
+        calls.push([queryBedrock, [thisHost, thisPort, TIMEOUT_MS]]);
+
+        break;
+
+      case null:
+        calls.push([queryQuery, [thisHost, 25565, TIMEOUT_MS]]);
+        calls.push([queryQuery, [thisHost, 19132, TIMEOUT_MS]]);
+      default:
+        calls.push([queryJava, [thisHost, thisPort || 25565, TIMEOUT_MS]]);
+        calls.push([queryBedrock, [thisHost, thisPort || 19132, TIMEOUT_MS]]);
     }
   }
 
+  switchPort(host, port);
+
+  if (srvs?.length)
+    for (const { srvName, srvPort } of srvs)
+      switchPort(srvName, srvPort);
+
+  console.dir(calls);
+
   let results;
   if (process.env.NODE_ENV === "production") {
-    results = Promise.allSettled(
+    results = await Promise.allSettled(
       calls.map(([ func, args ]) => func.apply(null, args))
     );
   } else {
@@ -163,6 +186,7 @@ async function queryServer(rawHost, rawPort = null) {
     .filter(([{ status }]) => status === "rejected")
     .map(([{ reason }, idx]) => [reason, idx])
     .forEach(([reason, idx]) => console.log(`${calls[idx][0].name}: ${reason[1]?.stack || reason.toString()}`));
+
   return returnObject;
 }
 

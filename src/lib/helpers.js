@@ -41,13 +41,13 @@ function verifyHostname(hostname) {
 
   const labels = hostname.split('.').filter(label => label.length > 0);
 
-  if (!/^[a-zA-Z0-9-.]{1,253}$/g.test(hostname)) {
+  if (!/^[a-zA-Z0-9\-_\.]{1,253}$/g.test(hostname)) {
     return false;
   }
 
   const isValid =
     labels.every(label => {
-      return /^[a-zA-Z0-9-]{1,63}$/g.test(label) &&
+      return /^[a-zA-Z0-9\-_]{1,63}$/g.test(label) &&
       !(
         label.startsWith('-')         ||
         label.endsWith  ('-')
