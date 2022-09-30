@@ -116,7 +116,7 @@ async function queryServer(rawHost, rawPort = null) {
   switchPort(host, port);
 
   if (srvs?.length)
-    for (const { srvName, srvPort } of srvs)
+    for (const { name: srvName, port: srvPort } of srvs)
       switchPort(srvName, srvPort);
 
   console.dir(calls);
