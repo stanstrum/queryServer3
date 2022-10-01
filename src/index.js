@@ -13,7 +13,8 @@ const {
   // removeFormatting,
   // TimeoutPromise
   ConnectionError,
-  merge
+  merge,
+  shouldDebug
 } = require("@lib/helpers.js");
 
 const {
@@ -119,14 +120,14 @@ async function queryServer(rawHost, rawPort = null) {
     for (const { name: srvName, port: srvPort } of srvs)
       switchPort(srvName, srvPort);
 
-  console.dir(calls);
-
   let results;
-  if (process.env.NODE_ENV === "production") {
+  if (!shouldDebug) {
     results = await Promise.allSettled(
       calls.map(([ func, args ]) => func.apply(null, args))
     );
   } else {
+    console.dir(calls);
+
     results = [];
 
     for (const [ func, args ] of calls) {
@@ -181,11 +182,13 @@ async function queryServer(rawHost, rawPort = null) {
       returnObject.motd = obj?.name;
   } catch {}
 
-  results
-    .map((result, idx) => [result, idx])
-    .filter(([{ status }]) => status === "rejected")
-    .map(([{ reason }, idx]) => [reason, idx])
-    .forEach(([reason, idx]) => console.log(`${calls[idx][0].name}: ${reason[1]?.stack || reason.toString()}`));
+  if (shouldDebug) {
+    results
+      .map((result, idx) => [result, idx])
+      .filter(([{ status }]) => status === "rejected")
+      .map(([{ reason }, idx]) => [reason, idx])
+      .forEach(([reason, idx]) => console.log(`${calls[idx][0].name}: ${reason[1]?.stack || reason.toString()}`));
+  }
 
   return returnObject;
 }

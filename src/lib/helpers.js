@@ -74,7 +74,12 @@ function stringArrayToObject(stringArray) {
   return returnObject;
 }
 
-const show_hexy = (buf, pfx) => console.log(hexy(buf, { prefix: pfx + ' ' }));
+const shouldDebug = process.env.NODE_ENV === "development"  ;
+const show_hexy = (buf, pfx) => {
+  if (shouldDebug) {
+    console.log(hexy(buf, { prefix: pfx + ' ' }));
+  }
+};
 
 let ctr = 0;
 const auto = () => ++ctr;
@@ -114,5 +119,6 @@ module.exports = {
   removeFormatting,
   ConnectionError,
   TimeoutPromise,
-  merge
+  merge,
+  shouldDebug
 };

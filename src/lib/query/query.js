@@ -6,12 +6,12 @@ const dgram = require("dgram");
 
 const { Query } = require("@static/packets.js");
 
-const { show_hexy, stringArrayToObject, ConnectionError, TimeoutPromise, merge } = require("@lib/helpers.js");
+const { show_hexy, stringArrayToObject, ConnectionError, TimeoutPromise, merge, shouldDebug } = require("@lib/helpers.js");
 
 async function getData(hostname, port, timeout) {
   const timeoutPromise = TimeoutPromise(timeout, "Query Query");
 
-  console.group("Establishing connection")
+  shouldDebug && console.group("Establishing connection")
 
   const socket = await Promise.race([
     new Promise((resolve, reject) => {
@@ -25,8 +25,8 @@ async function getData(hostname, port, timeout) {
     timeoutPromise
   ]);
 
-  console.log(`Connection established`);
-  console.groupEnd();
+  shouldDebug && console.log(`Connection established`);
+  shouldDebug && console.groupEnd();
 
   const timeStart = Date.now();
 
@@ -85,11 +85,11 @@ async function queryQuery(host, port, timeout) {
     }
   };
 
-  console.group("Trying " + host + (port ? `:${port}` : "") + " as Query");
+  shouldDebug && console.group("Trying " + host + (port ? `:${port}` : "") + " as Query");
   const { latency, basic_buffer, full_buffer } = await getData(host, port, timeout);
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
 
-  console.group("Decoding response packet");
+  shouldDebug && console.group("Decoding response packet");
 
   if (typeof latency !== "number")
     throw new Error("No latency");
@@ -127,7 +127,7 @@ async function queryQuery(host, port, timeout) {
     }
   }
 
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
 
   return returnObject;
 }

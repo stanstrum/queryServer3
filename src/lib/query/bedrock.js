@@ -6,14 +6,14 @@ const dgram = require("dgram");
 
 const { Bedrock } = require("@static/packets.js");
 
-const { /*show_hexy,*/ stringArrayToObject, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
+const { /*show_hexy,*/ stringArrayToObject, ConnectionError, TimeoutPromise, shouldDebug } = require("@lib/helpers.js");
 
 async function getData(hostname, port, timeout) {
   validateArguments(hostname, port, timeout);
 
   const timeoutPromise = TimeoutPromise(timeout, "Bedrock Query");
 
-  console.group("Establishing connection")
+  shouldDebug && console.group("Establishing connection")
   const socket = await Promise.race([
     new Promise((resolve, reject) => {
       const _socket = dgram.createSocket({ type: "udp4" });
@@ -25,8 +25,8 @@ async function getData(hostname, port, timeout) {
     }),
     timeoutPromise
   ]);
-  console.log("Connection established");
-  console.groupEnd();
+  shouldDebug && console.log("Connection established");
+  shouldDebug && console.groupEnd();
 
   const encoded = Bedrock.unconnected_ping.encode({
     time      : BigInt(Math.floor(Date.now() / 1000)),
@@ -34,12 +34,12 @@ async function getData(hostname, port, timeout) {
     clientGUID: crypto.randomBytes(8)
   });
 
-  console.group("Sending packet until receipt");
+  shouldDebug && console.group("Sending packet until receipt");
   const timeStart = Date.now();
   const buffer = await udpSendUntilReceive(socket, encoded, 1000, timeoutPromise);
   const latency = Math.ceil(Date.now() - timeStart);
-  console.log(`Received ${buffer.length} byte(s), latency is ${latency}ms`);
-  console.groupEnd();
+  shouldDebug && console.log(`Received ${buffer.length} byte(s), latency is ${latency}ms`);
+  shouldDebug && console.groupEnd();
 
   return { latency, buffer };
 }
@@ -58,11 +58,11 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
     type: "Bedrock"
   };
 
-  console.group("Trying " + host + (port ? `:${port}` : "") + " as Bedrock");
+  shouldDebug && console.group("Trying " + host + (port ? `:${port}` : "") + " as Bedrock");
   const results = await getData(host, port, TIMEOUT_MS);
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
 
-  console.group("Decoding response packet");
+  shouldDebug && console.group("Decoding response packet");
 
   if (typeof results?.latency !== "number") {
     throw new Error("No latency returned from queryBedrock");
@@ -79,7 +79,7 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
 
   // console.dir(decoded);
 
-  console.log("Parsing serverID");
+  shouldDebug && console.log("Parsing serverID");
 
   if (typeof decoded?.serverID !== "string")
     throw new Error("Decoded buffer does not have serverID");
@@ -107,8 +107,8 @@ async function queryBedrock(host, port, TIMEOUT_MS) {
 
   // returnObject.players.list = [];
 
-  console.log("Done");
-  console.groupEnd();
+  shouldDebug && console.log("Done");
+  shouldDebug && console.groupEnd();
 
   return returnObject;
 }

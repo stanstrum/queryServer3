@@ -4,7 +4,7 @@ const net = require("net");
 const varint = require("varint");
 
 const { Java } = require("@static/packets.js");
-const { show_hexy, ConnectionError, TimeoutPromise } = require("@lib/helpers.js");
+const { show_hexy, ConnectionError, TimeoutPromise, shouldDebug } = require("@lib/helpers.js");
 
 function readJavaPacket(socket) {
   let listener;
@@ -74,7 +74,7 @@ function readJavaPacket(socket) {
 async function getData(host, port, timeout) {
   let timeoutPromise = TimeoutPromise(timeout, "Java Query");
 
-  console.group("Establishing connection");
+  shouldDebug && console.group("Establishing connection");
 
   const socket = await Promise.race([
     new Promise((resolve, reject) => {
@@ -88,8 +88,8 @@ async function getData(host, port, timeout) {
     timeoutPromise
   ]);
 
-  console.log("Connection established");
-  console.groupEnd();
+  shouldDebug && console.log("Connection established");
+  shouldDebug && console.groupEnd();
 
   // socket.on("data", data => show_hexy(data, '<'));
   const write = data => {
@@ -106,22 +106,22 @@ async function getData(host, port, timeout) {
   const request = Java.request.encode({});
   const ping = Java.ping.encode({ payload: Buffer.from("sebglhp\0") }, 8);
 
-  console.group("Sending handshake");
+  shouldDebug && console.group("Sending handshake");
   write(handshake);
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
 
-  console.group("Sending request");
+  shouldDebug && console.group("Sending request");
   write(request);
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
 
-  console.group("Waiting for response");
+  shouldDebug && console.group("Waiting for response");
   const response = await Promise.race([
     readJavaPacket(socket),
     timeoutPromise
   ]);
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
 
-  console.group("Performing ping/pong for latency");
+  shouldDebug && console.group("Performing ping/pong for latency");
 
   write(ping);
   const startTime = Date.now();
@@ -133,11 +133,11 @@ async function getData(host, port, timeout) {
   const latency = Date.now() - startTime;
 
   if (ping.compare(pong) !== 0) {
-    console.log("Ping and pong packets differ?");
+    shouldDebug && console.log("Ping and pong packets differ?");
   }
 
-  console.groupEnd();
-  console.log(`Ping/pong completed, latency is ${latency}ms`);
+  shouldDebug && console.groupEnd();
+  shouldDebug && console.log(`Ping/pong completed, latency is ${latency}ms`);
 
   socket.end();
 
@@ -161,12 +161,12 @@ async function queryJava(host, port, timeout) {
     type: "Java"
   };
 
-  console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
+  shouldDebug && console.group("Trying " + host + (port ? `:${port}` : "") + " as Java");
   const results = await getData(host, port, timeout);
   const { buffer } = results;
-  console.groupEnd();
+  shouldDebug && console.groupEnd();
   
-  console.group("Decoding response packet");
+  shouldDebug && console.group("Decoding response packet");
 
   if (typeof results.latency === "number") {
     returnObject.latency = results.latency;
@@ -213,7 +213,7 @@ async function queryJava(host, port, timeout) {
     ) {
       returnObject.players.list = responseAsObject.players.sample.map(({ id, name }) => ({ uuid: id, name }));
     } else {
-      console.log("No player sample");
+      shouldDebug && console.log("No player sample");
 
       // returnObject.players.list = [];
     }
@@ -226,15 +226,15 @@ async function queryJava(host, port, timeout) {
       returnObject.type = `${responseAsObject.modinfo.type} ${returnObject.type}`;
     }
 
-    console.groupEnd();
+    shouldDebug && console.groupEnd();
 
   } catch (e) {
-    console.error(e?.stack || e);
-    console.groupEnd();
+    shouldDebug && console.error(e?.stack || e);
+    shouldDebug && console.groupEnd();
 
-    console.group("Failed to decode, trying strings");
+    shouldDebug && console.group("Failed to decode, trying strings");
+    shouldDebug && console.groupEnd();
     throw new Error("Strings not implemented");
-    console.groupEnd();
   }
 
   return returnObject;
