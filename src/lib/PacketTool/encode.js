@@ -170,7 +170,7 @@ function encode(object) {
           throw new Error(`Invalid data type value processed: ${DT.getByValue(datatype)}`);
       }
     } catch (e) {
-      shouldDebug && console.error("While encoding", [value], `as ${DT.getByValue(datatype)}:`);
+      console.error("While encoding", [value], `as ${DT.getByValue(datatype)}:`);
 
       throw e;
     }

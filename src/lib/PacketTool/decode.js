@@ -176,7 +176,7 @@ function decode(buffer, fixedByteLengths = []) {
         offset += length;
 
         if (bytes.length !== length) {
-          shouldDebug && console.log(`Failed to read string, ran out of bytes (read: ${bytes.length}, expected: ${length})`);
+          console.log(`Failed to read string, ran out of bytes (read: ${bytes.length}, expected: ${length})`);
         }
 
         returnObject[key] = string;
