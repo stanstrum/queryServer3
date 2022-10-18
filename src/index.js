@@ -112,12 +112,13 @@ async function queryServer(rawHost, rawPort = null) {
         calls.push([queryBedrock, [thisHost, thisPort || 19132, TIMEOUT_MS]]);
     }
   }
-
-  switchPort(host, port);
-
   if (srvs?.length)
     for (const { name: srvName, port: srvPort } of srvs)
       switchPort(srvName, srvPort);
+  
+  switchPort(host, port);
+
+
 
   console.dir(calls);
 
