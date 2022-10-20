@@ -13,7 +13,8 @@ async function getData(hostname, port, timeout) {
 
   const timeoutPromise = TimeoutPromise(timeout, "Bedrock Query");
 
-  console.group("Establishing connection")
+  console.group("Establishing connection");
+
   const socket = await Promise.race([
     new Promise((resolve, reject) => {
       const _socket = dgram.createSocket({ type: "udp4" });
@@ -25,6 +26,7 @@ async function getData(hostname, port, timeout) {
     }),
     timeoutPromise
   ]);
+
   console.log("Connection established");
   console.groupEnd();
 

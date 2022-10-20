@@ -11,7 +11,7 @@ const { show_hexy, stringArrayToObject, ConnectionError, TimeoutPromise, merge }
 async function getData(hostname, port, timeout) {
   const timeoutPromise = TimeoutPromise(timeout, "Query Query");
 
-  console.group("Establishing connection")
+  console.group("Establishing connection");
 
   const socket = await Promise.race([
     new Promise((resolve, reject) => {
