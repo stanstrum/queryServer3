@@ -80,6 +80,8 @@ async function getData(host, port, timeout) {
     new Promise((resolve, reject) => {
       const _socket = new net.Socket();
 
+      setTimeout(() => _socket?.destroy(), timeout);
+
       _socket.once("connect", () => resolve(_socket));
       _socket.once("error", e => reject(new ConnectionError(e.message)));
 

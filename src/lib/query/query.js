@@ -17,6 +17,8 @@ async function getData(hostname, port, timeout) {
     new Promise((resolve, reject) => {
       const _socket = dgram.createSocket({ type: "udp4" });
 
+      setTimeout(() => _socket?.close(), timeout);
+
       _socket.once("error", e => reject(new ConnectionError(e.message)));
       _socket.once("connect", () => resolve(_socket));
 
